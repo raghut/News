@@ -8,6 +8,8 @@ import com.rgu.news.data.persistance.NewsListDao;
 import com.rgu.news.network.service.NewsApiService;
 import com.rgu.news.ui.interactor.NewsListInteractor;
 import com.rgu.news.ui.presenter.NewsListPresenter;
+import com.rgu.news.utils.rx.RxSchedulers;
+import com.rgu.news.utils.rx.RxSchedulersAbstractBase;
 
 import javax.inject.Singleton;
 
@@ -40,6 +42,11 @@ public class NewsModule {
     }
 
     @Provides
+    public RxSchedulersAbstractBase provideRxScheduler() {
+        return new RxSchedulers();
+    }
+
+    @Provides
     @Singleton
     public NewsListDao getNewsListDao(NewsDataBase database) {
         return database.getNewsListDao();
@@ -51,7 +58,7 @@ public class NewsModule {
     }
 
     @Provides
-    public NewsListPresenter provideNewListPresenter(NewsListInteractor interactor, NewsListDao newsListDao) {
-        return new NewsListPresenter(interactor, newsListDao);
+    public NewsListPresenter provideNewListPresenter(NewsListInteractor interactor, NewsListDao newsListDao, RxSchedulersAbstractBase rxSchedulers) {
+        return new NewsListPresenter(interactor, newsListDao, rxSchedulers);
     }
 }

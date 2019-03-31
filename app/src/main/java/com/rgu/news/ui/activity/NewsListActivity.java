@@ -12,12 +12,13 @@ import com.rgu.news.R;
 import com.rgu.news.data.model.NewsListDataResponse;
 import com.rgu.news.databinding.ActivityNewsListLayoutBinding;
 import com.rgu.news.ui.adapter.NewsListAdapter;
-import com.rgu.news.ui.contract.NewViewPresenterContract;
+import com.rgu.news.ui.contract.NewsListViewPresenterContract;
 import com.rgu.news.ui.presenter.NewsListPresenter;
+import com.rgu.news.utils.NetworkUtil;
 
 import javax.inject.Inject;
 
-public class NewsListActivity extends AppCompatActivity implements NewViewPresenterContract.IView {
+public class NewsListActivity extends AppCompatActivity implements NewsListViewPresenterContract.IView {
 
     private ActivityNewsListLayoutBinding newsListActivityBinding;
     private NewsListAdapter newsListAdapter;
@@ -54,6 +55,12 @@ public class NewsListActivity extends AppCompatActivity implements NewViewPresen
         } else {
             Toast.makeText(this, getString(R.string.no_news_found_message), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onFetchNewsListError(Throwable throwable) {
+        hideProgressBar();
+        Toast.makeText(this, NetworkUtil.getErrorType(throwable), Toast.LENGTH_SHORT).show();
     }
 
     private void fetchTopHeadLines() {

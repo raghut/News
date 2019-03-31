@@ -9,33 +9,35 @@ import com.rgu.news.data.model.NewsListDataResponse;
 import com.rgu.news.data.persistance.NewsListDao;
 import com.rgu.news.data.persistance.NewsTable;
 import com.rgu.news.enums.CategoryType;
-import com.rgu.news.ui.contract.NewViewPresenterContract;
+import com.rgu.news.ui.contract.NewsListViewPresenterContract;
 import com.rgu.news.ui.interactor.NewsListInteractor;
 import com.rgu.news.utils.NetworkUtil;
+import com.rgu.news.utils.rx.RxSchedulersAbstractBase;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
-public class NewsListPresenter implements NewViewPresenterContract.IPresenter {
+public class NewsListPresenter implements NewsListViewPresenterContract.IPresenter {
     private static final String TAG = NewsListPresenter.class.getSimpleName();
 
     private NewsListInteractor newListInteractor;
     private NewsListDao newsListDao;
-    private NewViewPresenterContract.IView newsView;
+    private RxSchedulersAbstractBase rxSchedulers;
+    private NewsListViewPresenterContract.IView newsView;
     private CompositeDisposable compositeDisposable;
 
-    public NewsListPresenter(NewsListInteractor interactor, NewsListDao newsListDao) {
+    public NewsListPresenter(NewsListInteractor interactor, NewsListDao newsListDao, RxSchedulersAbstractBase rxSchedulers) {
         newListInteractor = interactor;
         this.newsListDao = newsListDao;
+        this.rxSchedulers = rxSchedulers;
     }
 
+
     @Override
-    public void onAttachView(NewViewPresenterContract.IView view) {
+    public void onAttachView(NewsListViewPresenterContract.IView view) {
         newsView = view;
         compositeDisposable = new CompositeDisposable();
     }
@@ -45,15 +47,16 @@ public class NewsListPresenter implements NewViewPresenterContract.IPresenter {
     public void fetchTopHeadLines() {
         fetchFromCache(CategoryType.TOP_HEADLINES);
         compositeDisposable.add(newListInteractor.fetchTopHeadLines(getRequestParams())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(rxSchedulers.getIOScheduler())
+                .observeOn(rxSchedulers.getMainThreadScheduler())
                 .subscribe(newsListDataResponse -> {
                             Log.d(TAG, "fetchTopHeadLines onNext");
-                            handleNewsListResponse(newsListDataResponse);
                             insertIntoDB(CategoryType.TOP_HEADLINES, newsListDataResponse);
+                            handleNewsListResponse(newsListDataResponse);
                         },
                         throwable -> {
                             Log.d(TAG, "fetchTopHeadLines failed with: " + throwable.getMessage());
+                            newsView.onFetchNewsListError(throwable);
                         }));
     }
 
@@ -61,12 +64,12 @@ public class NewsListPresenter implements NewViewPresenterContract.IPresenter {
         compositeDisposable.add(newsListDao.getNewsListByCategory(topHeadlines)
                 .firstElement()
                 .toObservable()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(rxSchedulers.getIOScheduler())
                 .switchMap(newsListJson -> {
                     Log.d(TAG, "fetchFromCache switchMap: " + newsListJson);
                     return Observable.just(NetworkUtil.fromJson(newsListJson, NewsListDataResponse.class));
                 })
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rxSchedulers.getMainThreadScheduler())
                 .subscribe(newsListDataResponse -> {
                             Log.d(TAG, "fetchFromCache onNext");
                             handleNewsListResponse(newsListDataResponse);
@@ -86,13 +89,13 @@ public class NewsListPresenter implements NewViewPresenterContract.IPresenter {
             newsTable.setNewsData(new Gson().toJson(newsListDataResponse));
             newsTable.setTimestamp(System.currentTimeMillis());
             compositeDisposable.add(Observable.just(1)
-                    .subscribeOn(Schedulers.io())
+                    .subscribeOn(rxSchedulers.getIOScheduler())
                     .switchMap(integer -> {
                         newsListDao.delete(categoryType);
                         newsListDao.insertAll(newsTable);
                         return Observable.just(1);
                     })
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(rxSchedulers.getMainThreadScheduler())
                     .subscribe(integers -> {
                         Log.d(TAG, "insertIntoDB: " + integers);
                     }, throwable -> {
