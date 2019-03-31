@@ -12,5 +12,5 @@ import retrofit2.http.QueryMap;
 public interface NewsApiService {
 
     @GET("top-headlines")
-    Observable<NewsListDataResponse> fetchNewsList(@QueryMap Map<String, String> requestParams);
+    Observable<NewsListDataResponse> fetchTopHeadLines(@QueryMap Map<String, String> requestParams);
 }

@@ -11,15 +11,15 @@ import com.rgu.news.data.model.NewsListDataResponse.NewsItem;
 import com.rgu.news.databinding.ItemNewsAdapterLayoutBinding;
 import com.rgu.news.ui.viewholder.NewsListItemViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewsListAdapter extends RecyclerView.Adapter<NewsListItemViewHolder> {
 
-    private List<NewsItem> newsList;
+    private List<NewsItem> newsList = new ArrayList<>();
 
-    public NewsListAdapter(List<NewsItem> newsItems) {
+    public NewsListAdapter() {
 
-        newsList = newsItems;
     }
 
     @NonNull
@@ -37,5 +37,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListItemViewHolder
     @Override
     public int getItemCount() {
         return newsList.size();
+    }
+
+    public void updateList(List<NewsItem> newsList) {
+        this.newsList.clear();
+        this.newsList.addAll(newsList);
+        notifyDataSetChanged();
     }
 }

@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.rgu.news.dagger.component.DaggerNewsComponent;
 import com.rgu.news.dagger.component.NewsComponent;
+import com.rgu.news.dagger.module.NewsModule;
 
 
 public class NewsApplication extends Application {
@@ -20,7 +21,9 @@ public class NewsApplication extends Application {
     }
 
     private void initDependencies() {
-        newsComponent = DaggerNewsComponent.create();
+        newsComponent = DaggerNewsComponent.builder()
+                .newsModule(new NewsModule(this))
+                .build();
     }
 
     public static NewsApplication getsInstance() {

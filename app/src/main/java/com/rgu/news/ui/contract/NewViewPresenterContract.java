@@ -15,6 +15,6 @@ public interface NewViewPresenterContract {
 
         void onDetachView();
 
-        void fetchNewsList();
+        void fetchTopHeadLines();
     }
 }

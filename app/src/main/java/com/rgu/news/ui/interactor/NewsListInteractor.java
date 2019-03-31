@@ -16,7 +16,7 @@ public class NewsListInteractor {
         this.newsApiService = newsApiService;
     }
 
-    public Observable<NewsListDataResponse> fetchNewsList(Map<String, String> requestParams) {
-        return newsApiService.fetchNewsList(requestParams);
+    public Observable<NewsListDataResponse> fetchTopHeadLines(Map<String, String> requestParams) {
+        return newsApiService.fetchTopHeadLines(requestParams);
     }
 }
