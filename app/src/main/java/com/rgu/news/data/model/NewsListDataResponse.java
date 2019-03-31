@@ -16,7 +16,7 @@ public class NewsListDataResponse {
     public List<NewsItem> newsList;
 
 
-    public class NewsItem {
+    public static class NewsItem {
         @SerializedName("title")
         public String title;
 
@@ -30,7 +30,7 @@ public class NewsListDataResponse {
         public Source source;
     }
 
-    public class Source {
+    public static class Source {
         @SerializedName("id")
         public String id;
 
