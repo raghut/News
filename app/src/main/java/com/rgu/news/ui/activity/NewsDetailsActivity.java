@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.webkit.WebView;
@@ -43,21 +44,30 @@ public class NewsDetailsActivity extends AppCompatActivity {
 
         binding.detailsWv.setBackgroundColor(0);
         binding.detailsWv.getSettings().setJavaScriptEnabled(true);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading Please wait...");
-        progressDialog.show();
+        showProgressBar();
         binding.detailsWv.setWebViewClient(new WebViewClient() {
-            public void onPageFinished(WebView view, String url) {
-                try {
-                    progressDialog.dismiss();
-                } catch (Exception e) {
-                    e.printStackTrace();
-
-                }
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                hideProgressBar();
             }
 
         });
 
         binding.detailsWv.loadUrl(url);
+    }
+
+    //Can be move to Base activity for Listing and Details activity
+    private void showProgressBar() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.loading_message));
+        }
+        progressDialog.show();
+    }
+
+    private void hideProgressBar() {
+        if (progressDialog != null) {
+            progressDialog.hide();
+        }
     }
 }
