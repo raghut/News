@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">News</string>
     <string name="no_news_found_message">No news Found</string>
+    <string name="head_lines_lable">Head Lines</string>
 </resources>

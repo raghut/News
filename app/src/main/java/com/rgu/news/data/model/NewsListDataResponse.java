@@ -25,5 +25,16 @@ public class NewsListDataResponse {
 
         @SerializedName("url")
         public String url;
+
+        @SerializedName("source")
+        public Source source;
+    }
+
+    public class Source {
+        @SerializedName("id")
+        public String id;
+
+        @SerializedName("name")
+        public String name;
     }
 }

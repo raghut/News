@@ -23,14 +23,6 @@ public class NewsListActivity extends AppCompatActivity implements NewViewPresen
     @Inject
     NewsListPresenter presenter;
 
-
-
-
-
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +32,8 @@ public class NewsListActivity extends AppCompatActivity implements NewViewPresen
         initViews();
 
         presenter.fetchNewsList();
+
+        setTitle(R.string.head_lines_lable);
     }
 
     private void initViews() {
