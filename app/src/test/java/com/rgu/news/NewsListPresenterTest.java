@@ -86,17 +86,17 @@ public class NewsListPresenterTest {
 
     @Test
     public void testCacheNewsEmpty() {
-
+        //Todo: Need to write
     }
 
     @Test
     public void testCacheNewsNonEmpty() {
-
+        //Todo: Need to write
     }
 
     @Test
     public void testUpdateNewsListIntoDbSuccess() {
-
+         //Todo: Need to write
     }
 
 
